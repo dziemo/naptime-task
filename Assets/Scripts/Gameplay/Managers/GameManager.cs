@@ -7,8 +7,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private int cubesAmount;
 
-    private void Start()
+    public void StartGame(GameOption currentGameOption)
     {
-        cubesManager.CreateCubes(cubesAmount);
+        cubesManager.CreateCubes(currentGameOption.ObjectsCount);
     }
 }
