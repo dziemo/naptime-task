@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CubesManager : MonoBehaviour
 {
+    public event Action OnLastCubeLeft;
+
     [SerializeField]
     private CubeFactory cubeFactory;
     [SerializeField]
@@ -18,14 +21,14 @@ public class CubesManager : MonoBehaviour
     private float hitHideTime;
 
     private List<Vector2> spawnPoints;
-    private List<CubeController> cubes;
+    private List<CubeController> activeCubes;
 
     public void CreateCubes(int amount)
     {
         spawnPoints = PoissonDiscSampling.GeneratePoints(offsetRadius, spawnRegionSize);
 
         ClearCubes();
-        cubes = new List<CubeController>();
+        activeCubes = new List<CubeController>();
 
         for (int i = 0; i < amount; i++)
         {
@@ -33,9 +36,9 @@ public class CubesManager : MonoBehaviour
             cube.SetupDependencies(projectilesManager);
             cube.Initialize();
             PlaceCube(cube);
-            cubes.Add(cube);
+            activeCubes.Add(cube);
 
-            cube.OnHit += Cube_OnHit;
+            cube.OnDamageTaken += Cube_OnHit;
         }
     }
 
@@ -49,7 +52,18 @@ public class CubesManager : MonoBehaviour
         }
         else
         {
-            cube.OnHit -= Cube_OnHit;
+            cube.OnDamageTaken -= Cube_OnHit;
+            activeCubes.Remove(cube);
+            CheckForLastCube();
+        }
+    }
+
+    private void CheckForLastCube()
+    {
+        if (activeCubes.Count == 1)
+        {
+            OnLastCubeLeft?.Invoke();
+            activeCubes[0].StopBehaviours();
         }
     }
 
@@ -62,22 +76,22 @@ public class CubesManager : MonoBehaviour
 
     private void PlaceCube(CubeController cube)
     {
-        Vector2 spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
+        Vector2 spawnPoint = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
         spawnPoints.Remove(spawnPoint);
         cube.transform.position = spawnPoint - (spawnRegionSize / 2);
     }
 
     private void ClearCubes()
     {
-        if (cubes == null)
+        if (activeCubes == null)
         {
             return;
         }
 
-        for (int i = cubes.Count - 1; i >= 0; i--)
+        for (int i = activeCubes.Count - 1; i >= 0; i--)
         {
-            cubes[i].OnDespawn();
-            cubes.RemoveAt(i);
+            activeCubes[i].OnDespawn();
+            activeCubes.RemoveAt(i);
         }
     }
 }

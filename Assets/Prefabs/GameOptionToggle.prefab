@@ -178,6 +178,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   toggle: {fileID: 1302631917825214720}
   buttonImage: {fileID: 7830904445865725942}
+  countText: {fileID: 5587780389779348159}
+  countTextShadow: {fileID: 0}
   unselectedSprite: {fileID: 21300000, guid: 106196386a4626149a581d60aa7fe80b, type: 3}
   selectedSprite: {fileID: 21300000, guid: b148e46f3104b0a43bbc2b9f69ba2d8f, type: 3}
   selectedScale: 1.1
@@ -195,7 +197,7 @@ GameObject:
   - component: {fileID: 4771895790201254944}
   - component: {fileID: 5587780389779348159}
   m_Layer: 5
-  m_Name: ObjectsCount
+  m_Name: ObjectsCountText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -275,8 +277,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
-  m_fontSizeBase: 72
+  m_fontSize: 64
+  m_fontSizeBase: 64
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

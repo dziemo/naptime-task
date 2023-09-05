@@ -8,10 +8,11 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField]
     private StartButton startButton;
     [SerializeField]
+    private GameObject menuParent;
+    [SerializeField]
     private List<GameOptionToggle> gameOptionToggles = new List<GameOptionToggle>();
 
     private GameOption currentGameOption;
-
 
     private void OnEnable()
     {
@@ -53,13 +54,13 @@ public class MainMenuManager : MonoBehaviour
         Hide();
     }
 
-    private void Show()
+    public void Show()
     {
-        gameObject.SetActive(true);
+        menuParent.SetActive(true);
     }
 
-    private void Hide()
+    public void Hide()
     {
-        gameObject.SetActive(false);
+        menuParent.SetActive(false);
     }
 }

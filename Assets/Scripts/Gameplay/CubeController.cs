@@ -4,7 +4,7 @@ using UnityEngine.Pool;
 
 public class CubeController : MonoBehaviour, IProduct, IPoolable<CubeController>
 {
-    public event Action<CubeController> OnHit;
+    public event Action<CubeController> OnDamageTaken;
 
     [SerializeField]
     private RandomRotator rotator;
@@ -29,11 +29,24 @@ public class CubeController : MonoBehaviour, IProduct, IPoolable<CubeController>
     {
         shooting.Initialize(projectilesManager);
         health.Initialize();
+
         StartBehaviours();
+    }
+
+    private void OnEnable()
+    {
+        health.OnDamageTaken += Health_OnDamageTaken;
+    }
+
+    private void OnDisable()
+    {
+        health.OnDamageTaken -= Health_OnDamageTaken;
     }
 
     private void Health_OnDamageTaken(int healthLeft)
     {
+        OnDamageTaken?.Invoke(this);
+
         if (healthLeft > 0)
         {
             BeingHit();
@@ -47,7 +60,6 @@ public class CubeController : MonoBehaviour, IProduct, IPoolable<CubeController>
     private void BeingHit()
     {
         StopBehaviours();
-        OnHit?.Invoke(this);
         gameObject.SetActive(false);
     }
 
@@ -61,7 +73,6 @@ public class CubeController : MonoBehaviour, IProduct, IPoolable<CubeController>
     {
         StopBehaviours();
         OnDespawn();
-        Debug.Log("DIED");
     }
 
     private void StartBehaviours()
@@ -70,7 +81,7 @@ public class CubeController : MonoBehaviour, IProduct, IPoolable<CubeController>
         shooting.StartShooting();
     }
 
-    private void StopBehaviours()
+    public void StopBehaviours()
     {
         rotator.StopRotation();
         shooting.StopShooting();
@@ -80,14 +91,10 @@ public class CubeController : MonoBehaviour, IProduct, IPoolable<CubeController>
     {
         pool.Release(this);
         rotator.StopRotation();
-
-        health.OnDamageTaken -= Health_OnDamageTaken;
     }
 
     public void OnSpawn(ObjectPool<CubeController> pool)
     {
         this.pool = pool;
-
-        health.OnDamageTaken += Health_OnDamageTaken;
     }
 }
