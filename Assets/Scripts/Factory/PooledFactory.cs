@@ -5,6 +5,8 @@ public abstract class PooledFactory<T> : MonoBehaviour where T : MonoBehaviour, 
 {
     [SerializeField]
     private T productPrefab;
+    [SerializeField]
+    private Transform productsParent;
 
     private ObjectPool<T> productPool;
 
@@ -31,8 +33,8 @@ public abstract class PooledFactory<T> : MonoBehaviour where T : MonoBehaviour, 
 
     protected virtual T OnCreate()
     {
-        T newProduct = Instantiate(productPrefab);
-        newProduct.OnSpawned(productPool);
+        T newProduct = Instantiate(productPrefab, productsParent);
+        newProduct.OnSpawn(productPool);
         return newProduct;
     }
 

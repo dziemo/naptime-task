@@ -4,6 +4,11 @@ using UnityEngine.Pool;
 
 public class Cube : MonoBehaviour, IProduct, IPoolable<Cube>
 {
+    [SerializeField]
+    private Health health;
+    [SerializeField]
+    private float hitHideTime;
+
     private Coroutine rotationCoroutine;
 
     public ObjectPool<Cube> Pool => pool;
@@ -11,6 +16,7 @@ public class Cube : MonoBehaviour, IProduct, IPoolable<Cube>
 
     public void Initialize()
     {
+        health.Initialize();
         rotationCoroutine = StartCoroutine(RotationSequence());
     }
 
@@ -26,14 +32,44 @@ public class Cube : MonoBehaviour, IProduct, IPoolable<Cube>
         transform.Rotate(0, 0, Random.Range(0f, 360f));
     }
 
-    public void OnDespawned()
+    public void OnDespawn()
     {
         pool.Release(this);
         StopCoroutine(rotationCoroutine);
+
+        health.OnDamageTaken -= Health_OnDamageTaken;
     }
 
-    public void OnSpawned(ObjectPool<Cube> pool)
+    public void OnSpawn(ObjectPool<Cube> pool)
     {
         this.pool = pool;
+
+        health.OnDamageTaken += Health_OnDamageTaken;
+    }
+
+    private void Health_OnDamageTaken(int healthLeft)
+    {
+        if (healthLeft > 0)
+        {
+            StartCoroutine(OnHit());
+        }
+        else
+        {
+            Die();
+        }
+    }
+
+    private IEnumerator OnHit()
+    {
+        gameObject.SetActive(false);
+        StopCoroutine(rotationCoroutine);
+        yield return new WaitForSeconds(hitHideTime);
+        gameObject.SetActive(true);
+        rotationCoroutine = StartCoroutine(RotationSequence());
+    }
+
+    private void Die()
+    {
+        //Dead
     }
 }
