@@ -22,6 +22,12 @@ public class CubesManager : MonoBehaviour
 
     private List<Vector2> spawnPoints;
     private List<CubeController> activeCubes;
+    private Vector2 halfSpawnRegionSize;
+
+    private void Awake()
+    {
+        halfSpawnRegionSize = spawnRegionSize / 2;
+    }
 
     public void CreateCubes(int amount)
     {
@@ -44,7 +50,7 @@ public class CubesManager : MonoBehaviour
 
     private void Cube_OnHit(CubeController cube)
     {
-        spawnPoints.Add(cube.transform.position + (Vector3)(spawnRegionSize / 2));
+        spawnPoints.Add(cube.transform.position + (Vector3)halfSpawnRegionSize);
 
         if (cube.CurrentHealth > 0)
         {
@@ -78,7 +84,7 @@ public class CubesManager : MonoBehaviour
     {
         Vector2 spawnPoint = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)];
         spawnPoints.Remove(spawnPoint);
-        cube.transform.position = spawnPoint - (spawnRegionSize / 2);
+        cube.transform.position = spawnPoint - halfSpawnRegionSize;
     }
 
     private void ClearCubes()
